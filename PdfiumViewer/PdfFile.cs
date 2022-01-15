@@ -24,7 +24,9 @@ namespace PdfiumViewer
         public PdfFile(Stream stream, string password)
         {
             if (stream == null)
+            {
                 throw new ArgumentNullException(nameof(stream));
+            }
 
             PdfLibrary.EnsureLoaded();
 
@@ -33,7 +35,9 @@ namespace PdfiumViewer
 
             var document = NativeMethods.FPDF_LoadCustomDocument(stream, password, _id);
             if (document == IntPtr.Zero)
+            {
                 throw new PdfException((PdfError)NativeMethods.FPDF_GetLastError());
+            }
 
             LoadDocument(document);
         }
@@ -43,7 +47,9 @@ namespace PdfiumViewer
         public bool RenderPDFPageToDC(int pageNumber, IntPtr dc, int dpiX, int dpiY, int boundsOriginX, int boundsOriginY, int boundsWidth, int boundsHeight, NativeMethods.FPDF flags)
         {
             if (_disposed)
+            {
                 throw new ObjectDisposedException(GetType().Name);
+            }
 
             using (var pageData = new PageData(_document, _form, pageNumber))
             {
@@ -56,17 +62,23 @@ namespace PdfiumViewer
         public bool RenderPDFPageToBitmap(int pageNumber, IntPtr bitmapHandle, int dpiX, int dpiY, int boundsOriginX, int boundsOriginY, int boundsWidth, int boundsHeight, int rotate, NativeMethods.FPDF flags, bool renderFormFill)
         {
             if (_disposed)
+            {
                 throw new ObjectDisposedException(GetType().Name);
+            }
 
             using (var pageData = new PageData(_document, _form, pageNumber))
             {
                 if (renderFormFill)
+                {
                     flags &= ~NativeMethods.FPDF.ANNOT;
+                }
 
                 NativeMethods.FPDF_RenderPageBitmap(bitmapHandle, pageData.Page, boundsOriginX, boundsOriginY, boundsWidth, boundsHeight, rotate, flags);
 
                 if (renderFormFill)
+                {
                     NativeMethods.FPDF_FFLDraw(_form, bitmapHandle, pageData.Page, boundsOriginX, boundsOriginY, boundsWidth, boundsHeight, rotate, flags);
+                }
             }
 
             return true;
@@ -75,7 +87,9 @@ namespace PdfiumViewer
         public PdfPageLinks GetPageLinks(int pageNumber, Size pageSize)
         {
             if (_disposed)
+            {
                 throw new ObjectDisposedException(GetType().Name);
+            }
 
             var links = new List<PdfPageLink>();
 
@@ -91,7 +105,9 @@ namespace PdfiumViewer
                     string uri = null;
 
                     if (destination != IntPtr.Zero)
+                    {
                         target = (int)NativeMethods.FPDFDest_GetPageIndex(_document, destination);
+                    }
 
                     var action = NativeMethods.FPDFLink_GetAction(annotation);
                     if (action != IntPtr.Zero)
@@ -122,7 +138,9 @@ namespace PdfiumViewer
         public List<SizeF> GetPDFDocInfo()
         {
             if (_disposed)
+            {
                 throw new ObjectDisposedException(GetType().Name);
+            }
 
             int pageCount = NativeMethods.FPDF_GetPageCount(_document);
             var result = new List<SizeF>(pageCount);
@@ -167,7 +185,9 @@ namespace PdfiumViewer
 
                 _form = NativeMethods.FPDFDOC_InitFormFillEnvironment(_document, _formCallbacks);
                 if (_form != IntPtr.Zero)
+                {
                     break;
+                }
             }
 
             NativeMethods.FPDF_SetFormFieldHighlightColor(_form, 0, 0xFFE4DD);
@@ -184,11 +204,15 @@ namespace PdfiumViewer
         private void LoadBookmarks(PdfBookmarkCollection bookmarks, IntPtr bookmark)
         {
             if (bookmark == IntPtr.Zero)
+            {
                 return;
+            }
 
             bookmarks.Add(LoadBookmark(bookmark));
             while ((bookmark = NativeMethods.FPDF_BookmarkGetNextSibling(_document, bookmark)) != IntPtr.Zero)
+            {
                 bookmarks.Add(LoadBookmark(bookmark));
+            }
         }
 
         private PdfBookmark LoadBookmark(IntPtr bookmark)
@@ -205,7 +229,9 @@ namespace PdfiumViewer
 
             var child = NativeMethods.FPDF_BookmarkGetFirstChild(_document, bookmark);
             if (child != IntPtr.Zero)
+            {
                 LoadBookmarks(result.Children, child);
+            }
 
             return result;
         }
@@ -218,7 +244,9 @@ namespace PdfiumViewer
 
             string result = Encoding.Unicode.GetString(buffer);
             if (result.Length > 0 && result[result.Length - 1] == 0)
+            {
                 result = result.Substring(0, result.Length - 1);
+            }
 
             return result;
         }
@@ -227,7 +255,9 @@ namespace PdfiumViewer
         {
             IntPtr dest = NativeMethods.FPDF_BookmarkGetDest(_document, bookmark);
             if (dest != IntPtr.Zero)
+            {
                 return NativeMethods.FPDFDest_GetPageIndex(_document, dest);
+            }
 
             return 0;
         }
@@ -237,7 +267,9 @@ namespace PdfiumViewer
             var matches = new List<PdfMatch>();
 
             if (String.IsNullOrEmpty(text))
+            {
                 return new PdfMatches(startPage, endPage, matches);
+            }
 
             for (int page = startPage; page <= endPage; page++)
             {
@@ -245,9 +277,14 @@ namespace PdfiumViewer
                 {
                     NativeMethods.FPDF_SEARCH_FLAGS flags = 0;
                     if (matchCase)
+                    {
                         flags |= NativeMethods.FPDF_SEARCH_FLAGS.FPDF_MATCHCASE;
+                    }
+
                     if (wholeWord)
+                    {
                         flags |= NativeMethods.FPDF_SEARCH_FLAGS.FPDF_MATCHWHOLEWORD;
+                    }
 
                     var handle = NativeMethods.FPDFText_FindStart(pageData.TextPage, FPDFEncoding.GetBytes(text), flags, 0);
 
@@ -418,7 +455,9 @@ namespace PdfiumViewer
                 var bounds = GetBounds(textPage, index + i);
 
                 if (bounds.Width == 0 || bounds.Height == 0)
+                {
                     continue;
+                }
 
                 if (
                     lastBounds.HasValue &&
@@ -497,12 +536,12 @@ namespace PdfiumViewer
             return FPDFEncoding.GetString(result, 0, textSpan.Length * 2);
         }
 
-        public void DeletePage (int pageNumber)
+        public void DeletePage(int pageNumber)
         {
             NativeMethods.FPDFPage_Delete(_document, pageNumber);
         }
 
-        public void RotatePage (int pageNumber, PdfRotation rotation)
+        public void RotatePage(int pageNumber, PdfRotation rotation)
         {
             using (var pageData = new PageData(_document, _form, pageNumber))
             {
@@ -532,7 +571,9 @@ namespace PdfiumViewer
 
             uint length = NativeMethods.FPDF_GetMetaText(_document, tag, null, 0);
             if (length <= 2)
+            {
                 return string.Empty;
+            }
 
             byte[] buffer = new byte[length];
             NativeMethods.FPDF_GetMetaText(_document, tag, buffer, length);
@@ -545,7 +586,9 @@ namespace PdfiumViewer
             string dt = GetMetaText(tag);
 
             if (string.IsNullOrEmpty(dt))
+            {
                 return null;
+            }
 
             Regex dtRegex =
                 new Regex(
@@ -622,7 +665,9 @@ namespace PdfiumViewer
                 }
 
                 if (_formCallbacksHandle.IsAllocated)
+                {
                     _formCallbacksHandle.Free();
+                }
 
                 if (_stream != null)
                 {

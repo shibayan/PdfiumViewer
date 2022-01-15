@@ -37,7 +37,9 @@ namespace PdfiumViewer
         public static PdfDocument Load(string path, string password)
         {
             if (path == null)
+            {
                 throw new ArgumentNullException(nameof(path));
+            }
 
             return Load(File.OpenRead(path), password);
         }
@@ -50,9 +52,14 @@ namespace PdfiumViewer
         public static PdfDocument Load(IWin32Window owner, string path)
         {
             if (owner == null)
+            {
                 throw new ArgumentNullException(nameof(owner));
+            }
+
             if (path == null)
+            {
                 throw new ArgumentNullException(nameof(path));
+            }
 
             return Load(owner, File.OpenRead(path), null);
         }
@@ -65,9 +72,14 @@ namespace PdfiumViewer
         public static PdfDocument Load(IWin32Window owner, Stream stream)
         {
             if (owner == null)
+            {
                 throw new ArgumentNullException(nameof(owner));
+            }
+
             if (stream == null)
+            {
                 throw new ArgumentNullException(nameof(stream));
+            }
 
             return Load(owner, stream, null);
         }
@@ -124,7 +136,9 @@ namespace PdfiumViewer
         public static PdfDocument Load(Stream stream, string password)
         {
             if (stream == null)
+            {
                 throw new ArgumentNullException(nameof(stream));
+            }
 
             return new PdfDocument(stream, password);
         }
@@ -156,7 +170,9 @@ namespace PdfiumViewer
 
             _pageSizes = _file.GetPDFDocInfo();
             if (_pageSizes == null)
+            {
                 throw new Win32Exception();
+            }
 
             PageSizes = new ReadOnlyCollection<SizeF>(_pageSizes);
         }
@@ -187,9 +203,14 @@ namespace PdfiumViewer
         public void Render(int page, Graphics graphics, float dpiX, float dpiY, Rectangle bounds, PdfRenderFlags flags)
         {
             if (graphics == null)
+            {
                 throw new ArgumentNullException("graphics");
+            }
+
             if (_disposed)
+            {
                 throw new ObjectDisposedException(GetType().Name);
+            }
 
             float graphicsDpiX = graphics.DpiX;
             float graphicsDpiY = graphics.DpiY;
@@ -224,7 +245,9 @@ namespace PdfiumViewer
                 NativeMethods.SetViewportOrgEx(dc, point.X, point.Y, out point);
 
                 if (!success)
+                {
                     throw new Win32Exception();
+                }
             }
             finally
             {
@@ -306,7 +329,9 @@ namespace PdfiumViewer
         public Image Render(int page, int width, int height, float dpiX, float dpiY, PdfRotation rotate, PdfRenderFlags flags)
         {
             if (_disposed)
+            {
                 throw new ObjectDisposedException(GetType().Name);
+            }
 
             if ((flags & PdfRenderFlags.CorrectFromDpi) != 0)
             {
@@ -340,7 +365,9 @@ namespace PdfiumViewer
                     );
 
                     if (!success)
+                    {
                         throw new Win32Exception();
+                    }
                 }
                 finally
                 {
@@ -367,7 +394,9 @@ namespace PdfiumViewer
         public void Save(string path)
         {
             if (path == null)
+            {
                 throw new ArgumentNullException("path");
+            }
 
             using (var stream = File.Create(path))
             {
@@ -382,7 +411,9 @@ namespace PdfiumViewer
         public void Save(Stream stream)
         {
             if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
+            }
 
             _file.Save(stream);
         }

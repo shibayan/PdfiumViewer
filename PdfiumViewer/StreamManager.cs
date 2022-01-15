@@ -14,7 +14,9 @@ namespace PdfiumViewer
         public static int Register(Stream stream)
         {
             if (stream == null)
+            {
                 throw new ArgumentNullException(nameof(stream));
+            }
 
             lock (_syncRoot)
             {

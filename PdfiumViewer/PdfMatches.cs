@@ -18,7 +18,9 @@ namespace PdfiumViewer
         public PdfMatches(int startPage, int endPage, IList<PdfMatch> matches)
         {
             if (matches == null)
+            {
                 throw new ArgumentNullException("matches");
+            }
 
             StartPage = startPage;
             EndPage = endPage;

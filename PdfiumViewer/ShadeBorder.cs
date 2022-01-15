@@ -24,9 +24,14 @@ namespace PdfiumViewer
         public void Draw(Graphics graphics, Rectangle bounds)
         {
             if (_disposed)
+            {
                 throw new ObjectDisposedException(GetType().Name);
+            }
+
             if (graphics == null)
+            {
                 throw new ArgumentNullException("graphics");
+            }
 
             _n.ResetTransform();
             _n.TranslateTransform(0, bounds.Top - Size.Top);

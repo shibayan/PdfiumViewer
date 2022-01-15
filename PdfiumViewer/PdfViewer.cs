@@ -114,7 +114,9 @@ namespace PdfiumViewer
         {
             var handler = LinkClick;
             if (handler != null)
+            {
                 handler(this, e);
+            }
         }
 
         private void UpdateBookmarks()
@@ -129,7 +131,9 @@ namespace PdfiumViewer
 
                 _bookmarks.Nodes.Clear();
                 foreach (var bookmark in _document.Bookmarks)
+                {
                     _bookmarks.Nodes.Add(GetBookmarkNode(bookmark));
+                }
             }
         }
 
@@ -204,14 +208,18 @@ namespace PdfiumViewer
                 form.Document.PrinterSettings.FromPage = 1;
                 form.Document.PrinterSettings.ToPage = _document.PageCount;
                 if (DefaultPrinter != null)
+                {
                     form.Document.PrinterSettings.PrinterName = DefaultPrinter;
+                }
 
                 if (form.ShowDialog(FindForm()) == DialogResult.OK)
                 {
                     try
                     {
                         if (form.Document.PrinterSettings.FromPage <= _document.PageCount)
+                        {
                             form.Document.Print();
+                        }
                     }
                     catch
                     {
@@ -228,7 +236,9 @@ namespace PdfiumViewer
             if (bookmark.Children != null)
             {
                 foreach (var child in bookmark.Children)
+                {
                     node.Nodes.Add(GetBookmarkNode(child));
+                }
             }
             return node;
         }

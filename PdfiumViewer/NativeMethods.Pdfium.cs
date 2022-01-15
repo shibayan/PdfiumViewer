@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
 
 #pragma warning disable 1591
 
@@ -381,37 +381,49 @@ namespace PdfiumViewer
         public static IntPtr FPDF_BookmarkGetFirstChild(IntPtr document, IntPtr bookmark)
         {
             lock (LockString)
+            {
                 return Imports.FPDFBookmark_GetFirstChild(document, bookmark);
+            }
         }
 
         public static IntPtr FPDF_BookmarkGetNextSibling(IntPtr document, IntPtr bookmark)
         {
             lock (LockString)
+            {
                 return Imports.FPDFBookmark_GetNextSibling(document, bookmark);
+            }
         }
 
         public static uint FPDF_BookmarkGetTitle(IntPtr bookmark, byte[] buffer, uint buflen)
         {
             lock (LockString)
+            {
                 return Imports.FPDFBookmark_GetTitle(bookmark, buffer, buflen);
+            }
         }
 
         public static IntPtr FPDF_BookmarkGetAction(IntPtr bookmark)
         {
             lock (LockString)
+            {
                 return Imports.FPDFBookmark_GetAction(bookmark);
+            }
         }
 
         public static IntPtr FPDF_BookmarkGetDest(IntPtr document, IntPtr bookmark)
         {
             lock (LockString)
+            {
                 return Imports.FPDFBookmark_GetDest(document, bookmark);
+            }
         }
 
         public static uint FPDF_ActionGetType(IntPtr action)
         {
             lock (LockString)
+            {
                 return Imports.FPDFAction_GetType(action);
+            }
         }
 
         /// <summary>
@@ -553,13 +565,18 @@ namespace PdfiumViewer
         {
             var stream = StreamManager.Get((int)param);
             if (stream == null)
+            {
                 return 0;
+            }
+
             byte[] managedBuffer = new byte[size];
 
             stream.Position = position;
             int read = stream.Read(managedBuffer, 0, (int)size);
             if (read != size)
+            {
                 return 0;
+            }
 
             Marshal.Copy(managedBuffer, 0, buffer, (int)size);
             return 1;
@@ -572,7 +589,9 @@ namespace PdfiumViewer
 
             var stream = StreamManager.Get((int)write.stream);
             if (stream == null)
+            {
                 return 0;
+            }
 
             byte[] buffer = new byte[size];
             Marshal.Copy(data, buffer, 0, (int)size);
@@ -597,8 +616,8 @@ namespace PdfiumViewer
             [DllImport("pdfium.dll")]
             public static extern void FPDF_Release();
 
-            [DllImport("pdfium.dll", CharSet = CharSet.Ansi)]            
-            public static extern IntPtr FPDF_LoadCustomDocument([MarshalAs(UnmanagedType.LPStruct)]FPDF_FILEACCESS access, string password);
+            [DllImport("pdfium.dll", CharSet = CharSet.Ansi)]
+            public static extern IntPtr FPDF_LoadCustomDocument([MarshalAs(UnmanagedType.LPStruct)] FPDF_FILEACCESS access, string password);
 
             [DllImport("pdfium.dll", CharSet = CharSet.Ansi)]
             public static extern IntPtr FPDF_LoadMemDocument(SafeHandle data_buf, int size, string password);
@@ -756,17 +775,17 @@ namespace PdfiumViewer
             #region Save/Edit APIs
 
             [DllImport("pdfium.dll")]
-            public static extern bool FPDF_ImportPages(IntPtr destDoc, IntPtr srcDoc, [MarshalAs(UnmanagedType.LPStr)]string pageRange, int index);
+            public static extern bool FPDF_ImportPages(IntPtr destDoc, IntPtr srcDoc, [MarshalAs(UnmanagedType.LPStr)] string pageRange, int index);
 
             [DllImport("pdfium.dll")]
             public static extern bool FPDF_SaveAsCopy(IntPtr doc,
-                [MarshalAs(UnmanagedType.LPStruct)]FPDF_FILEWRITE writer,
-                [MarshalAs(UnmanagedType.I4)]FPDF_SAVE_FLAGS flag);
+                [MarshalAs(UnmanagedType.LPStruct)] FPDF_FILEWRITE writer,
+                [MarshalAs(UnmanagedType.I4)] FPDF_SAVE_FLAGS flag);
 
             [DllImport("pdfium.dll")]
             public static extern bool FPDF_SaveWithVersion(IntPtr doc,
-                [MarshalAs(UnmanagedType.LPStruct)]FPDF_FILEWRITE writer,
-                [MarshalAs(UnmanagedType.I4)]FPDF_SAVE_FLAGS flags,
+                [MarshalAs(UnmanagedType.LPStruct)] FPDF_FILEWRITE writer,
+                [MarshalAs(UnmanagedType.I4)] FPDF_SAVE_FLAGS flags,
                 int fileVersion);
 
             [DllImport("pdfium.dll")]

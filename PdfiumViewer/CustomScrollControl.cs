@@ -25,7 +25,9 @@ namespace PdfiumViewer
             var ev = Scroll;
 
             if (ev != null)
+            {
                 ev(this, se);
+            }
         }
 
         public event EventHandler DisplayRectangleChanged;
@@ -34,7 +36,9 @@ namespace PdfiumViewer
         {
             var ev = DisplayRectangleChanged;
             if (ev != null)
+            {
                 ev(this, e);
+            }
         }
 
         public event SetCursorEventHandler SetCursor;
@@ -43,7 +47,9 @@ namespace PdfiumViewer
         {
             var handler = SetCursor;
             if (handler != null)
+            {
                 handler(this, e);
+            }
         }
 
         protected override CreateParams CreateParams
@@ -53,13 +59,22 @@ namespace PdfiumViewer
                 CreateParams cp = base.CreateParams;
 
                 if (HScroll || _horizontalScroll.Visible)
+                {
                     cp.Style |= NativeMethods.WS_HSCROLL;
+                }
                 else
+                {
                     cp.Style &= (~NativeMethods.WS_HSCROLL);
+                }
+
                 if (VScroll || _verticalScroll.Visible)
+                {
                     cp.Style |= NativeMethods.WS_VSCROLL;
+                }
                 else
+                {
                     cp.Style &= (~NativeMethods.WS_VSCROLL);
+                }
 
                 return cp;
             }
@@ -77,9 +92,14 @@ namespace PdfiumViewer
                     rect.Y = _displayRect.Y;
 
                     if (HScroll)
+                    {
                         rect.Width = _displayRect.Width;
+                    }
+
                     if (VScroll)
+                    {
                         rect.Height = _displayRect.Height;
+                    }
                 }
 
                 return rect;
@@ -114,7 +134,9 @@ namespace PdfiumViewer
         private void AdjustFormScrollbars()
         {
             if (ApplyScrollbarChanges())
+            {
                 PerformLayout();
+            }
         }
 
         private bool ApplyScrollbarChanges()
@@ -123,14 +145,22 @@ namespace PdfiumViewer
             var minClient = fullClient;
 
             if (HScroll)
+            {
                 fullClient.Height += SystemInformation.HorizontalScrollBarHeight;
+            }
             else
+            {
                 minClient.Height -= SystemInformation.HorizontalScrollBarHeight;
+            }
 
             if (VScroll)
+            {
                 fullClient.Width += SystemInformation.VerticalScrollBarWidth;
+            }
             else
+            {
                 minClient.Width -= SystemInformation.VerticalScrollBarWidth;
+            }
 
             int maxX = _displaySize.Width;
             int maxY = _displaySize.Height;
@@ -146,26 +176,45 @@ namespace PdfiumViewer
             var clientToBe = fullClient;
 
             if (needHscroll)
+            {
                 clientToBe.Height -= SystemInformation.HorizontalScrollBarHeight;
+            }
+
             if (needVscroll)
+            {
                 clientToBe.Width -= SystemInformation.VerticalScrollBarWidth;
+            }
 
             if (needHscroll && maxY > clientToBe.Height)
+            {
                 needVscroll = true;
+            }
+
             if (needVscroll && maxX > clientToBe.Width)
+            {
                 needHscroll = true;
+            }
 
             if (!needHscroll)
+            {
                 maxX = clientToBe.Width;
+            }
+
             if (!needVscroll)
+            {
                 maxY = clientToBe.Height;
+            }
 
             bool needLayout = SetVisibleScrollbars(needHscroll, needVscroll);
 
             if (HScroll || VScroll)
+            {
                 needLayout = (SetDisplayRectangleSize(maxX, maxY) || needLayout);
+            }
             else
+            {
                 SetDisplayRectangleSize(maxX, maxY);
+            }
 
             SyncScrollbars();
 
@@ -198,7 +247,9 @@ namespace PdfiumViewer
                 SyncScrollbars();
 
                 if (e is HandledMouseEventArgs)
+                {
                     ((HandledMouseEventArgs)e).Handled = true;
+                }
             }
             else if (HScroll)
             {
@@ -213,7 +264,9 @@ namespace PdfiumViewer
                 SyncScrollbars();
 
                 if (e is HandledMouseEventArgs)
+                {
                     ((HandledMouseEventArgs)e).Handled = true;
+                }
             }
 
             base.OnMouseWheel(e);
@@ -222,7 +275,9 @@ namespace PdfiumViewer
         protected override void OnVisibleChanged(EventArgs e)
         {
             if (Visible)
+            {
                 PerformLayout();
+            }
 
             base.OnVisibleChanged(e);
         }
@@ -254,18 +309,34 @@ namespace PdfiumViewer
             int minY = Math.Min(client.Height - displayRectangle.Height, 0);
 
             if (x > 0)
+            {
                 x = 0;
+            }
+
             if (x < minX)
+            {
                 x = minX;
+            }
+
             if (y > 0)
+            {
                 y = 0;
+            }
+
             if (y < minY)
+            {
                 y = minY;
+            }
 
             if (displayRectangle.X != x)
+            {
                 xDelta = x - displayRectangle.X;
+            }
+
             if (displayRectangle.Y != y)
+            {
                 yDelta = y - displayRectangle.Y;
+            }
 
             _displayRect.X = x;
             _displayRect.Y = y;
@@ -320,9 +391,14 @@ namespace PdfiumViewer
                 int y = _displayRect.Y;
 
                 if (!horiz)
+                {
                     x = 0;
+                }
+
                 if (!vert)
+                {
                     y = 0;
+                }
 
                 SetDisplayRectLocation(x, y);
                 HScroll = horiz;
@@ -330,13 +406,22 @@ namespace PdfiumViewer
 
                 //Update the visible member of ScrollBars....
                 if (horiz)
+                {
                     _horizontalScroll.Visible = true;
+                }
                 else
+                {
                     ResetScrollProperties(_horizontalScroll);
+                }
+
                 if (vert)
+                {
                     _verticalScroll.Visible = true;
+                }
                 else
+                {
                     ResetScrollProperties(_verticalScroll);
+                }
 
                 UpdateStyles();
             }
@@ -363,22 +448,37 @@ namespace PdfiumViewer
             int minY = ClientRectangle.Height - height;
 
             if (minX > 0)
+            {
                 minX = 0;
+            }
+
             if (minY > 0)
+            {
                 minY = 0;
+            }
 
             int x = (int)(_displayRect.X * hScale);
             int y = (int)(_displayRect.Y * vScale);
 
             if (!HScroll || x > 0)
+            {
                 x = 0;
+            }
+
             if (!VScroll || y > 0)
+            {
                 y = 0;
+            }
 
             if (x < minX)
+            {
                 x = minX;
+            }
+
             if (y < minY)
+            {
                 y = minY;
+            }
 
             SetDisplayRectLocation(x, y);
 
@@ -390,7 +490,9 @@ namespace PdfiumViewer
             Rectangle displayRect = _displayRect;
 
             if (!IsHandleCreated)
+            {
                 return;
+            }
 
             if (HScroll)
             {
@@ -399,7 +501,9 @@ namespace PdfiumViewer
                 _horizontalScroll.SmallChange = 5;
 
                 if (-displayRect.X >= 0 && -displayRect.X < _horizontalScroll.Maximum)
+                {
                     _horizontalScroll.Value = -displayRect.X;
+                }
 
                 _horizontalScroll.UpdateScrollInfo();
             }
@@ -411,7 +515,9 @@ namespace PdfiumViewer
                 _verticalScroll.SmallChange = 5;
 
                 if (-displayRect.Y >= 0 && -displayRect.Y < _verticalScroll.Maximum)
+                {
                     _verticalScroll.Value = -displayRect.Y;
+                }
 
                 _verticalScroll.UpdateScrollInfo();
             }
@@ -528,30 +634,50 @@ namespace PdfiumViewer
                 {
                     case ScrollAction.LineUp:
                         if (pos > _horizontalScroll.SmallChange)
+                        {
                             pos -= _horizontalScroll.SmallChange;
+                        }
                         else
+                        {
                             pos = 0;
+                        }
+
                         break;
 
                     case ScrollAction.LineDown:
                         if (pos < maxPos - _horizontalScroll.SmallChange)
+                        {
                             pos += _horizontalScroll.SmallChange;
+                        }
                         else
+                        {
                             pos = maxPos;
+                        }
+
                         break;
 
                     case ScrollAction.PageUp:
                         if (pos > _horizontalScroll.LargeChange)
+                        {
                             pos -= _horizontalScroll.LargeChange;
+                        }
                         else
+                        {
                             pos = 0;
+                        }
+
                         break;
 
                     case ScrollAction.PageDown:
                         if (pos < maxPos - _horizontalScroll.LargeChange)
+                        {
                             pos += _horizontalScroll.LargeChange;
+                        }
                         else
+                        {
                             pos = maxPos;
+                        }
+
                         break;
 
                     case ScrollAction.Home:
@@ -574,30 +700,50 @@ namespace PdfiumViewer
                 {
                     case ScrollAction.LineUp:
                         if (pos > 0)
+                        {
                             pos -= _verticalScroll.SmallChange;
+                        }
                         else
+                        {
                             pos = 0;
+                        }
+
                         break;
 
                     case ScrollAction.LineDown:
                         if (pos < maxPos - _verticalScroll.SmallChange)
+                        {
                             pos += _verticalScroll.SmallChange;
+                        }
                         else
+                        {
                             pos = maxPos;
+                        }
+
                         break;
 
                     case ScrollAction.PageUp:
                         if (pos > _verticalScroll.LargeChange)
+                        {
                             pos -= _verticalScroll.LargeChange;
+                        }
                         else
+                        {
                             pos = 0;
+                        }
+
                         break;
 
                     case ScrollAction.PageDown:
                         if (pos < maxPos - _verticalScroll.LargeChange)
+                        {
                             pos += _verticalScroll.LargeChange;
+                        }
                         else
+                        {
                             pos = maxPos;
+                        }
+
                         break;
 
                     case ScrollAction.Home:
@@ -620,7 +766,9 @@ namespace PdfiumViewer
             var type = (ScrollEventType)NativeMethods.Util.LOWORD(m.WParam);
 
             if (type != ScrollEventType.EndScroll)
+            {
                 OnScroll(new ScrollEventArgs(type, oldValue, value, scrollOrientation));
+            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -733,7 +881,9 @@ namespace PdfiumViewer
             public void UpdateScrollInfo()
             {
                 if (!_parentControl.IsHandleCreated || !Visible)
+                {
                     return;
+                }
 
                 var si = new NativeMethods.SCROLLINFO
                 {

@@ -42,11 +42,19 @@ namespace PdfiumViewer
         public PdfPrintMultiplePages(int horizontal, int vertical, Orientation orientation, float margin)
         {
             if (horizontal < 1)
+            {
                 throw new ArgumentOutOfRangeException("horizontal cannot be less than one");
+            }
+
             if (vertical < 1)
+            {
                 throw new ArgumentOutOfRangeException("vertical cannot be less than one");
+            }
+
             if (margin < 0)
+            {
                 throw new ArgumentOutOfRangeException("margin cannot be less than zero");
+            }
 
             Horizontal = horizontal;
             Vertical = vertical;

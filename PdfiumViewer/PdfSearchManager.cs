@@ -84,7 +84,9 @@ namespace PdfiumViewer
         public PdfSearchManager(PdfRenderer renderer)
         {
             if (renderer == null)
+            {
                 throw new ArgumentNullException(nameof(renderer));
+            }
 
             Renderer = renderer;
 
@@ -140,7 +142,9 @@ namespace PdfiumViewer
         public bool FindNext(bool forward)
         {
             if (_matches == null || _matches.Items.Count == 0)
+            {
                 return false;
+            }
 
             if (_offset == -1)
             {
@@ -157,13 +161,17 @@ namespace PdfiumViewer
             {
                 _offset++;
                 if (_offset >= _matches.Items.Count)
+                {
                     _offset = 0;
+                }
             }
             else
             {
                 _offset--;
                 if (_offset < 0)
+                {
                     _offset = _matches.Items.Count - 1;
+                }
             }
 
             UpdateHighlights();
@@ -176,7 +184,9 @@ namespace PdfiumViewer
         {
             var current = _bounds[_offset];
             if (current.Count > 0)
+            {
                 Renderer.ScrollIntoView(current[0]);
+            }
         }
 
         private int FindFirstFromCurrentPage()
@@ -189,7 +199,9 @@ namespace PdfiumViewer
                 {
                     var match = _matches.Items[j];
                     if (match.Page == page)
+                    {
                         return j;
+                    }
                 }
             }
 
@@ -209,7 +221,9 @@ namespace PdfiumViewer
             Renderer.Markers.Clear();
 
             if (_matches == null)
+            {
                 return;
+            }
 
             if (_highlightAllMatches)
             {

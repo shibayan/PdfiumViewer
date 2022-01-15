@@ -15,7 +15,9 @@ namespace PdfiumViewer
             lock (_syncRoot)
             {
                 if (_library == null)
+                {
                     _library = new PdfLibrary();
+                }
             }
         }
 

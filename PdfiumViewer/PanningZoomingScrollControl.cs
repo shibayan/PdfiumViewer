@@ -41,7 +41,9 @@ namespace PdfiumViewer
             var ev = ZoomChanged;
 
             if (ev != null)
+            {
                 ev(this, e);
+            }
         }
 
         /// <summary>
@@ -148,9 +150,13 @@ namespace PdfiumViewer
                 double zoom = _zoom;
 
                 if (e.Delta > 0)
+                {
                     zoom *= ZoomFactor;
+                }
                 else
+                {
                     zoom /= ZoomFactor;
+                }
 
                 zoom = Math.Min(Math.Max(zoom, ZoomMin), ZoomMax);
 
@@ -202,13 +208,19 @@ namespace PdfiumViewer
                 case Keys.Add:
                 case Keys.Oemplus:
                     if ((keyData & Keys.Modifiers) == Keys.Control)
+                    {
                         ZoomIn();
+                    }
+
                     return true;
 
                 case Keys.Subtract:
                 case Keys.OemMinus:
                     if ((keyData & Keys.Modifiers) == Keys.Control)
+                    {
                         ZoomOut();
+                    }
+
                     return true;
 
                 case Keys.Home:
@@ -227,7 +239,9 @@ namespace PdfiumViewer
         protected override void OnSetCursor(SetCursorEventArgs e)
         {
             if (_canPan && e.HitTest == HitTest.Client)
+            {
                 e.Cursor = PanCursor;
+            }
 
             base.OnSetCursor(e);
         }
@@ -244,7 +258,9 @@ namespace PdfiumViewer
             base.OnMouseDown(e);
 
             if (e.Button != MouseButtons.Left || !_canPan)
+            {
                 return;
+            }
 
             Capture = true;
             _dragStart = e.Location;
@@ -256,7 +272,9 @@ namespace PdfiumViewer
             base.OnMouseMove(e);
 
             if (!Capture)
+            {
                 return;
+            }
 
             var offset = new Point(e.Location.X - _dragStart.X, e.Location.Y - _dragStart.Y);
 
@@ -275,7 +293,9 @@ namespace PdfiumViewer
             public bool PreFilterMessage(ref Message m)
             {
                 if (m.Msg != NativeMethods.WM_MOUSEWHEEL)
+                {
                     return false;
+                }
 
                 var control = Control.FromHandle(NativeMethods.WindowFromPoint(Cursor.Position));
 
@@ -285,7 +305,9 @@ namespace PdfiumViewer
                 }
 
                 if (control == null)
+                {
                     return false;
+                }
 
                 NativeMethods.SendMessage(control.Handle, m.Msg, m.WParam, m.LParam);
                 return true;

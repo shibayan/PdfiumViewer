@@ -18,7 +18,9 @@ namespace PdfiumViewer
         {
             var ev = BeforeQueryPageSettings;
             if (ev != null)
+            {
                 ev(this, e);
+            }
         }
 
         public event PrintPageEventHandler BeforePrintPage;
@@ -27,13 +29,17 @@ namespace PdfiumViewer
         {
             var ev = BeforePrintPage;
             if (ev != null)
+            {
                 ev(this, e);
+            }
         }
 
         public PdfPrintDocument(IPdfDocument document, PdfPrintSettings settings)
         {
             if (document == null)
+            {
                 throw new ArgumentNullException("document");
+            }
 
             _document = document;
             _settings = settings;
@@ -59,7 +65,9 @@ namespace PdfiumViewer
                 bool landscape = GetOrientation(_document.PageSizes[_currentPage]) == Orientation.Landscape;
 
                 if (inverseLandscape)
+                {
                     landscape = !landscape;
+                }
 
                 e.PageSettings.Landscape = landscape;
             }
@@ -72,9 +80,13 @@ namespace PdfiumViewer
             OnBeforePrintPage(e);
 
             if (_settings.MultiplePages != null)
+            {
                 PrintMultiplePages(e);
+            }
             else
+            {
                 PrintSinglePage(e);
+            }
 
             base.OnPrintPage(e);
         }
@@ -100,12 +112,18 @@ namespace PdfiumViewer
                     {
                         int page = _currentPage * pagesPerPage;
                         if (settings.Orientation == System.Windows.Forms.Orientation.Horizontal)
+                        {
                             page += vertical * settings.Vertical + horizontal;
+                        }
                         else
+                        {
                             page += horizontal * settings.Horizontal + vertical;
+                        }
 
                         if (page >= _document.PageCount)
+                        {
                             continue;
+                        }
 
                         double pageLeft = (widthPerPage + settings.Margin) * horizontal;
                         double pageTop = (heightPerPage + settings.Margin) * vertical;
@@ -118,7 +136,9 @@ namespace PdfiumViewer
             }
 
             if (PrinterSettings.ToPage > 0)
+            {
                 pageCount = Math.Min(PrinterSettings.ToPage, pageCount);
+            }
 
             e.HasMorePages = _currentPage < pageCount;
         }
@@ -180,9 +200,13 @@ namespace PdfiumViewer
             double scaledHeight = height;
 
             if (pageScale > printScale)
+            {
                 scaledWidth = width * (printScale / pageScale);
+            }
             else
+            {
                 scaledHeight = height * (pageScale / printScale);
+            }
 
             left += (width - scaledWidth) / 2;
             top += (height - scaledHeight) / 2;
@@ -217,7 +241,10 @@ namespace PdfiumViewer
         private Orientation GetOrientation(SizeF pageSize)
         {
             if (pageSize.Height > pageSize.Width)
+            {
                 return Orientation.Portrait;
+            }
+
             return Orientation.Landscape;
         }
 

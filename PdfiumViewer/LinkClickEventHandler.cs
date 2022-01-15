@@ -15,7 +15,7 @@ namespace PdfiumViewer
         /// Gets the link that was clicked.
         /// </summary>
         public PdfPageLink Link { get; private set; }
-        
+
         public LinkClickEventArgs(PdfPageLink link)
         {
             Link = link;

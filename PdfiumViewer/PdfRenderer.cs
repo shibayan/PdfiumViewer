@@ -61,7 +61,9 @@ namespace PdfiumViewer
             get
             {
                 if (Document == null || !_pageCacheValid)
+                {
                     return 0;
+                }
 
                 int top = -DisplayRectangle.Top;
                 int bottom = top + GetScrollClientArea().Height;
@@ -75,7 +77,9 @@ namespace PdfiumViewer
 
                         int hidden = pageCache.Bottom - bottom;
                         if (hidden > 0 && (double)hidden / pageCache.Height > 0.5 && page > 0)
+                        {
                             return page - 1;
+                        }
 
                         return page;
                     }
@@ -106,7 +110,9 @@ namespace PdfiumViewer
         public Rectangle GetOuterBounds(int page)
         {
             if (Document == null || !_pageCacheValid)
+            {
                 return Rectangle.Empty;
+            }
 
             page = Math.Min(Math.Max(page, 0), Document.PageCount - 1);
             return _pageCache[page].OuterBounds;
@@ -174,7 +180,9 @@ namespace PdfiumViewer
         public PdfPoint PointToPdf(Point location)
         {
             if (Document == null)
+            {
                 return PdfPoint.Empty;
+            }
 
             var offset = GetScrollOffset();
             location.Offset(-offset.Width, -offset.Height);
@@ -230,7 +238,9 @@ namespace PdfiumViewer
         public PdfRectangle BoundsToPdf(Rectangle bounds)
         {
             if (Document == null)
+            {
                 return PdfRectangle.Empty;
+            }
 
             var offset = GetScrollOffset();
             bounds.Offset(-offset.Width, -offset.Height);
@@ -283,7 +293,7 @@ namespace PdfiumViewer
         {
             return BoundsFromPdf(bounds, true);
         }
-            
+
         private Rectangle BoundsFromPdf(PdfRectangle bounds, bool translateOffset)
         {
             var offset = translateOffset ? GetScrollOffset() : Size.Empty;
@@ -391,9 +401,14 @@ namespace PdfiumViewer
         public void Load(IPdfDocument document)
         {
             if (document == null)
+            {
                 throw new ArgumentNullException("document");
+            }
+
             if (document.PageCount == 0)
+            {
                 throw new ArgumentException("Document does not contain any pages", "document");
+            }
 
             Document = document;
 
@@ -428,7 +443,9 @@ namespace PdfiumViewer
         private void UpdateScrollbars()
         {
             if (Document == null)
+            {
                 return;
+            }
 
             UpdateScaleFactor(ScrollBars.Both);
 
@@ -462,7 +479,9 @@ namespace PdfiumViewer
         private void RebuildPageCache()
         {
             if (Document == null || _suspendPaintCount > 0)
+            {
                 return;
+            }
 
             _pageCacheValid = true;
 
@@ -532,13 +551,21 @@ namespace PdfiumViewer
             ScrollBars scrollBarsVisible;
 
             if (HScroll && VScroll)
+            {
                 scrollBarsVisible = ScrollBars.Both;
+            }
             else if (HScroll)
+            {
                 scrollBarsVisible = ScrollBars.Horizontal;
+            }
             else if (VScroll)
+            {
                 scrollBarsVisible = ScrollBars.Vertical;
+            }
             else
+            {
                 scrollBarsVisible = ScrollBars.None;
+            }
 
             return GetScrollClientArea(scrollBarsVisible);
         }
@@ -595,7 +622,9 @@ namespace PdfiumViewer
         protected override void OnPaint(PaintEventArgs e)
         {
             if (Document == null || _suspendPaintCount > 0 || !_pageCacheValid)
+            {
                 return;
+            }
 
             EnsureMarkers();
 
@@ -632,7 +661,9 @@ namespace PdfiumViewer
                 if (rectangle.Top > bounds.Height)
                 {
                     if (_visiblePageEnd == -1)
+                    {
                         _visiblePageEnd = page - 1;
+                    }
 
                     if (pageCache.Image != null)
                     {
@@ -657,9 +688,14 @@ namespace PdfiumViewer
             }
 
             if (_visiblePageStart == -1)
+            {
                 _visiblePageStart = 0;
+            }
+
             if (_visiblePageEnd == -1)
+            {
                 _visiblePageEnd = Document.PageCount - 1;
+            }
         }
 
         private void DrawPageImage(Graphics graphics, int page, Rectangle pageBounds)
@@ -667,7 +703,9 @@ namespace PdfiumViewer
             var pageCache = _pageCache[page];
 
             if (pageCache.Image == null)
+            {
                 pageCache.Image = Document.Render(page, pageBounds.Width, pageBounds.Height, graphics.DpiX, graphics.DpiY, Rotation, PdfRenderFlags.Annotations);
+            }
 
             graphics.DrawImageUnscaled(pageCache.Image, pageBounds.Location);
         }
@@ -680,7 +718,7 @@ namespace PdfiumViewer
         {
             int height = (int)(_height * _scaleFactor + (ShadeBorder.Size.Vertical + PageMargin.Vertical) * Document.PageCount);
             int width = (int)(_maxWidth * _scaleFactor + ShadeBorder.Size.Horizontal + PageMargin.Horizontal);
-            
+
             var center = new Point(
                 DisplayRectangle.Width / 2,
                 DisplayRectangle.Height / 2
@@ -689,7 +727,8 @@ namespace PdfiumViewer
             if (
                 DisplayRectangle.Width > ClientSize.Width ||
                 DisplayRectangle.Height > ClientSize.Height
-            ) {
+            )
+            {
                 center.X += DisplayRectangle.Left;
                 center.Y += DisplayRectangle.Top;
             }
@@ -761,7 +800,9 @@ namespace PdfiumViewer
             base.OnMouseUp(e);
 
             if (_dragState == null)
+            {
                 return;
+            }
 
             int dx = Math.Abs(e.Location.X - _dragState.Location.X);
             int dy = Math.Abs(e.Location.Y - _dragState.Location.Y);
@@ -770,7 +811,9 @@ namespace PdfiumViewer
             _dragState = null;
 
             if (link == null)
+            {
                 return;
+            }
 
             if (dx <= SystemInformation.DragSize.Width && dy <= SystemInformation.DragSize.Height)
             {
@@ -784,10 +827,14 @@ namespace PdfiumViewer
             OnLinkClick(e);
 
             if (e.Handled)
+            {
                 return;
+            }
 
             if (e.Link.TargetPage.HasValue)
+            {
                 Page = e.Link.TargetPage.Value;
+            }
 
             if (e.Link.Uri != null)
             {
@@ -818,7 +865,9 @@ namespace PdfiumViewer
         {
             var handler = LinkClick;
             if (handler != null)
+            {
                 handler(this, e);
+            }
         }
 
         /// <summary>
@@ -921,17 +970,23 @@ namespace PdfiumViewer
         private void EnsureMarkers()
         {
             if (_markers != null)
+            {
                 return;
+            }
 
             _markers = new List<IPdfMarker>[_pageCache.Count];
 
             foreach (var marker in Markers)
             {
                 if (marker.Page < 0 || marker.Page >= _markers.Length)
+                {
                     continue;
+                }
 
                 if (_markers[marker.Page] == null)
+                {
                     _markers[marker.Page] = new List<IPdfMarker>();
+                }
 
                 _markers[marker.Page].Add(marker);
             }
@@ -941,7 +996,9 @@ namespace PdfiumViewer
         {
             var markers = _markers[page];
             if (markers == null)
+            {
                 return;
+            }
 
             foreach (var marker in markers)
             {

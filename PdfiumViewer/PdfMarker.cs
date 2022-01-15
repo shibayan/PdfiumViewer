@@ -32,9 +32,14 @@ namespace PdfiumViewer
         public void Draw(PdfRenderer renderer, Graphics graphics)
         {
             if (renderer == null)
+            {
                 throw new ArgumentNullException(nameof(renderer));
+            }
+
             if (graphics == null)
+            {
                 throw new ArgumentNullException(nameof(graphics));
+            }
 
             var bounds = renderer.BoundsFromPdf(new PdfRectangle(Page, Bounds));
 
