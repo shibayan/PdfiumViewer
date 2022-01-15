@@ -624,7 +624,6 @@ namespace PdfiumViewer
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref System.Windows.Forms.Message m)
         {
             switch (m.Msg)
