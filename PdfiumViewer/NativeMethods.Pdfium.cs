@@ -22,7 +22,7 @@ namespace PdfiumViewer
         {
             lock (LockString)
             {
-                Imports.FPDF_AddRef();
+                Imports.FPDF_InitLibrary();
             }
         }
 
@@ -30,7 +30,7 @@ namespace PdfiumViewer
         {
             lock (LockString)
             {
-                Imports.FPDF_Release();
+                Imports.FPDF_DestroyLibrary();
             }
         }
 
@@ -334,7 +334,7 @@ namespace PdfiumViewer
         {
             lock (LockString)
             {
-                return Imports.FPDFDest_GetPageIndex(document, dest);
+                return Imports.FPDFDest_GetDestPageIndex(document, dest);
             }
         }
 
@@ -611,10 +611,10 @@ namespace PdfiumViewer
         private static class Imports
         {
             [DllImport("pdfium.dll")]
-            public static extern void FPDF_AddRef();
+            public static extern void FPDF_InitLibrary();
 
             [DllImport("pdfium.dll")]
-            public static extern void FPDF_Release();
+            public static extern void FPDF_DestroyLibrary();
 
             [DllImport("pdfium.dll", CharSet = CharSet.Ansi)]
             public static extern IntPtr FPDF_LoadCustomDocument([MarshalAs(UnmanagedType.LPStruct)] FPDF_FILEACCESS access, string password);
@@ -731,7 +731,7 @@ namespace PdfiumViewer
             public static extern IntPtr FPDFLink_GetDest(IntPtr document, IntPtr link);
 
             [DllImport("pdfium.dll")]
-            public static extern uint FPDFDest_GetPageIndex(IntPtr document, IntPtr dest);
+            public static extern uint FPDFDest_GetDestPageIndex(IntPtr document, IntPtr dest);
 
             [DllImport("pdfium.dll")]
             public static extern bool FPDFLink_GetAnnotRect(IntPtr linkAnnot, FS_RECTF rect);
